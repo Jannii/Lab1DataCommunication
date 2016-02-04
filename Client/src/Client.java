@@ -20,7 +20,7 @@ public class Client {
         Scanner serverIP = new Scanner(System.in);
         System.out.println("Current server are "+ SERVER+" for other server print server ip number or just press enter for current!");
         String newIp = serverIP.nextLine();
-        if(newIp != ""){
+        if(!"".equals(newIp)){
             SERVER = newIp;
         }
             
@@ -66,6 +66,7 @@ public class Client {
                 out.println(typo);
                 out.flush();
                 if(typo.equals("List") ||typo.equals("apa")){
+                    
                     String syntax = in.readLine();
 
                     String[] splitRes = syntax.split(",");
@@ -73,10 +74,12 @@ public class Client {
                     for(int i = 0; i <splitRes.length; i++){
                         System.out.println(splitRes[i]);
                     }
+                    
                     //}
                 }
                 if(typo.equals("dl")){
-                    DIS.readByte();
+                    System.out.println("går in i get file");
+                    getFile();
                 }
             }
             
@@ -85,6 +88,22 @@ public class Client {
             retryException(server, port);
         }
 
+    }
+    public void getFile(){
+        InputStream is = null;
+        BufferedOutputStream bOS = null;
+        FileOutputStream fOS = null;
+        BufferedReader in = null;
+        try{
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String FILE_SIZE = in.readLine();
+            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
+            is = socket.getInputStream();
+            System.out.println(fileByte.length);
+            is.read(fileByte, 0, fileByte.length);
+        }catch(IOException ioe){
+            
+        }
     }
 
     public void retryException(String server, int port) {

@@ -1,4 +1,5 @@
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -24,7 +25,10 @@ public class Protocol {
     }
 
     public String checkForCommands(String command) {
-        String[] syntaxCommand = command.split(" ");
+        String[] syntaxCommand;
+        syntaxCommand = new String[2];
+        syntaxCommand = command.split(":");
+        System.out.println(syntaxCommand.length);
         if (syntaxCommand[0].equalsIgnoreCase("apa")) {
 
             try {
@@ -50,7 +54,7 @@ public class Protocol {
                 ex.printStackTrace();
             }           
         }else if(syntaxCommand[0].equalsIgnoreCase("dl")){
-            if(!syntaxCommand[1].isEmpty()){
+            if(!syntaxCommand[1].equals("")){
                 try{
                     String filePath =file.getCanonicalPath()+"\\"+syntaxCommand[1]; 
 
@@ -64,7 +68,7 @@ public class Protocol {
             }
         }
         else if(syntaxCommand[0].equalsIgnoreCase("sup")){
-            return syntaxCommand[1];
+            
         }
         else{
             return "Command doesent exist";

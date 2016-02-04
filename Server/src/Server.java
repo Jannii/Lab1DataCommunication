@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.net.*;
 
@@ -54,26 +53,55 @@ public class Server {
                 while (true) {
 
                     String typo = in.readLine();
-                    String[] typoSplit = typo.split(" ");
                     System.out.println("Client: " + typo);
-                    String syntax = p.checkForCommands(typoSplit[0]);
-                    if(typoSplit[0].equals("List")||typoSplit[0].equals("apa")){
+                    String syntax = p.checkForCommands(typo);
+                    if (typo.equals("List") || typo.equals("apa")) {
                         //if (!syntax.equals("")) {
-                            System.out.println("Server: " + syntax);
+                        System.out.println("Server: " + syntax);
 
                         //}
                         out.println(syntax);
                         out.flush();
-                    }else if(typoSplit[0].equals("dl")){
-                        outputToClient.writeBytes(syntax);
+                    } else if (typo.charAt(0) == 'd'&& typo.charAt(1) == 'l') {
+                        
+                        dlFile(syntax);
                     }
-                    
+
                 }
 
             } catch (IOException e) {
                 System.out.println("Client failed to connect!");
             }
         }
+    }
+
+    private void dlFile(String path) {
+        FileInputStream fIS = null;
+        BufferedInputStream bIS = null;
+        OutputStream os = null;
+        try {
+            File dlfile = new File(path);
+            byte[] filebyte = new byte[(int) dlfile.length()];
+            fIS = new FileInputStream(dlfile);
+            bIS = new BufferedInputStream(fIS);
+            bIS.read(filebyte, 0, filebyte.length);
+            os = socket.getOutputStream();
+            System.out.println("skickar fil");
+            out.println(filebyte.length);
+            os.write(filebyte, 0, filebyte.length);
+            os.flush();
+            out.flush();
+            System.out.println("done");
+        } catch (IOException ioe) {
+
+        } finally {
+//            try{
+//                System.out.println("");
+//            }catch(IOException ioe){
+//                
+//            }
+        }
+
     }
 
     private void shutDownHook(Socket socket) {

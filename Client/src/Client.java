@@ -8,15 +8,21 @@ public class Client {
     private static final int PORT = 9000;
     private static String SERVER = "Localhost";
     private static int tries = 0;
-
+    
     //DataInputStream inputFromServer;
     //DataOutputStream outputToServer;
     PrintWriter outPutToServer1;
     BufferedReader inPutFromServer1;
 
     Socket socket;
-
+    static String dlFolder;
     public static void main(String[] args) {
+        try{
+          setDlFolder(new File(".").getCanonicalPath());  
+        }catch(IOException ioe){
+            
+        }
+        
         Scanner serverIP = new Scanner(System.in);
         System.out.println("Current server are "+ SERVER+" for other server print server ip number or just press enter for current!");
         String newIp = serverIP.nextLine();
@@ -96,12 +102,35 @@ public class Client {
         BufferedReader in = null;
         try{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            fOS = new FileOutputStream(dlFolder);
             String FILE_SIZE = in.readLine();
-            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
+            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)+1];
+            int fileCount;
             is = socket.getInputStream();
             System.out.println(fileByte.length);
-            is.read(fileByte, 0, fileByte.length);
+            //is.read(fileByte, 0, fileByte.length);
+            
+            while((fileCount = is.read(fileByte))!=-1 ){
+                fOS.write(fileByte,0,fileCount);
+            }
         }catch(IOException ioe){
+            
+        }finally{
+            try{
+            is.close();
+            in.close();
+            bOS.close();
+            fOS.close();
+            
+            }catch(IOException ioe){
+                
+            }
+        }
+    }
+    public static void setDlFolder(String folder){
+        try{
+        dlFolder =folder;
+        }catch(Exception ioe){
             
         }
     }

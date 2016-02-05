@@ -87,7 +87,8 @@ public class Server {
             bIS.read(filebyte, 0, filebyte.length);
             os = socket.getOutputStream();
             System.out.println("skickar fil");
-            out.println(filebyte.length);
+            out.println(filebyte.length+1);
+            out.println(dlfile.getName());
             os.write(filebyte, 0, filebyte.length);
             os.flush();
             out.flush();

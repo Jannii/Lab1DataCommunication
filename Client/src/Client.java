@@ -8,7 +8,7 @@ public class Client {
     private static final int PORT = 9000;
     private static String SERVER = "Localhost";
     private static int tries = 0;
-    
+
     //DataInputStream inputFromServer;
     //DataOutputStream outputToServer;
     PrintWriter outPutToServer1;
@@ -16,21 +16,21 @@ public class Client {
 
     Socket socket;
     static String dlFolder;
+
     public static void main(String[] args) {
-        try{
-          setDlFolder(new File(".").getCanonicalPath());  
-        }catch(IOException ioe){
-            
+        try {
+            setDlFolder(new File(".").getCanonicalPath());
+        } catch (IOException ioe) {
+
         }
-        
+
         Scanner serverIP = new Scanner(System.in);
-        System.out.println("Current server are "+ SERVER+" for other server print server ip number or just press enter for current!");
+        System.out.println("Current server are " + SERVER + " for other server print server ip number or just press enter for current!");
         String newIp = serverIP.nextLine();
-        if(!"".equals(newIp)){
+        if (!"".equals(newIp)) {
             SERVER = newIp;
         }
-            
-        
+
         String server = SERVER;
         int port = PORT;
 
@@ -55,7 +55,6 @@ public class Client {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             DataInputStream DIS = new DataInputStream(socket.getInputStream());
-            
 
             System.out.println("Your Ip: " + socket.getInetAddress());
 
@@ -71,67 +70,79 @@ public class Client {
 
                 out.println(typo);
                 out.flush();
-                if(typo.equals("List") ||typo.equals("apa")){
-                    
+                if (typo.equals("List") || typo.equals("apa")) {
+
                     String syntax = in.readLine();
 
                     String[] splitRes = syntax.split(",");
                     //if (!syntax.equals("")) {
-                    for(int i = 0; i <splitRes.length; i++){
+                    for (int i = 0; i < splitRes.length; i++) {
                         System.out.println(splitRes[i]);
                     }
-                    
+
                     //}
                 }
-                if(typo.equals("dl")){
-                    System.out.println("går in i get file");
+                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
                     getFile();
                 }
             }
-            
+
         } catch (IOException e) {
             //e.printStackTrace();
             retryException(server, port);
         }
 
     }
-    public void getFile(){
+
+    public void getFile() {
+        System.out.println("går in i get file");
         InputStream is = null;
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
         BufferedReader in = null;
-        try{
+        int byteRead;
+        int current = 0;
+        try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            fOS = new FileOutputStream(dlFolder);
             String FILE_SIZE = in.readLine();
-            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)+1];
-            int fileCount;
+            String FILE_NAME = in.readLine();
             is = socket.getInputStream();
+            fOS = new FileOutputStream(dlFolder + "\\" + FILE_NAME);
+            bOS = new BufferedOutputStream(fOS);
+            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE) + 1];
             System.out.println(fileByte.length);
-            //is.read(fileByte, 0, fileByte.length);
-            
-            while((fileCount = is.read(fileByte))!=-1 ){
-                fOS.write(fileByte,0,fileCount);
-            }
-        }catch(IOException ioe){
-            
-        }finally{
-            try{
-            is.close();
-            in.close();
-            bOS.close();
-            fOS.close();
-            
-            }catch(IOException ioe){
-                
+            System.out.println(dlFolder + "\\" + FILE_NAME);
+            byteRead = is.read(fileByte, 0, fileByte.length);
+            current = byteRead;
+            do {
+                byteRead = is.read(fileByte, current, (fileByte.length - current));
+                if (byteRead >= 0) {
+                    current += byteRead;
+                }
+            } while (byteRead > -1);
+            bOS.write(fileByte, 0, current);
+            bOS.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            try {
+                if (fOS != null) {
+                    fOS.close();
+                }
+                if (bOS != null) {
+                    bOS.close();
+                }
+            } catch (IOException ioe) {
+
             }
         }
     }
-    public static void setDlFolder(String folder){
-        try{
-        dlFolder =folder;
-        }catch(Exception ioe){
-            
+
+    public static void setDlFolder(String folder) {
+        try {
+            dlFolder = folder;
+        } catch (Exception ioe) {
+
         }
     }
 

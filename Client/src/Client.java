@@ -100,32 +100,41 @@ public class Client {
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
         BufferedReader in = null;
-        int byteRead;
+        int byteRead = 0;
         int current = 0;
         try {
+            
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String FILE_SIZE = in.readLine();
+            System.out.println("FILE_SIZE: "+FILE_SIZE);
             String FILE_NAME = in.readLine();
+            System.out.println("FILE_NAME: "+ FILE_NAME);
             is = socket.getInputStream();
             fOS = new FileOutputStream(dlFolder + "\\" + FILE_NAME);
             bOS = new BufferedOutputStream(fOS);
-            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE) + 1];
+            byte [] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            byteRead = is.read(fileByte, 0, fileByte.length);
+            byteRead = is.read(fileByte,0,fileByte.length);
+            System.out.println("bytreRead: "+byteRead);
             current = byteRead;
+            
+            System.out.println("Current " + current);
             do {
+                System.out.println("do while");
                 byteRead = is.read(fileByte, current, (fileByte.length - current));
+                System.out.println("byteRead: " +byteRead);
                 if (byteRead >= 0) {
                     current += byteRead;
                 }
             } while (byteRead > -1);
             bOS.write(fileByte, 0, current);
             bOS.flush();
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             ioe.printStackTrace();
         } finally {
             try {
+                System.out.println("close");
                 if (fOS != null) {
                     fOS.close();
                 }
@@ -133,7 +142,7 @@ public class Client {
                     bOS.close();
                 }
             } catch (IOException ioe) {
-
+                ioe.printStackTrace();
             }
         }
     }

@@ -104,12 +104,13 @@ public class Client {
         int current = 0;
         try {
             
+            is = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String FILE_SIZE = in.readLine();
             System.out.println("FILE_SIZE: "+FILE_SIZE);
             String FILE_NAME = in.readLine();
             System.out.println("FILE_NAME: "+ FILE_NAME);
-            is = socket.getInputStream();
+//            String FILE_BYTESIZE = in.readLine()
             fOS = new FileOutputStream(dlFolder + "\\" + FILE_NAME);
             bOS = new BufferedOutputStream(fOS);
             byte [] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
@@ -127,7 +128,7 @@ public class Client {
                 if (byteRead >= 0) {
                     current += byteRead;
                 }
-            } while (byteRead > -1);
+            } while (Integer.parseInt(FILE_SIZE) > current);
             bOS.write(fileByte, 0, current);
             bOS.flush();
         } catch (Exception ioe) {

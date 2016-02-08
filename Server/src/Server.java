@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
@@ -54,22 +55,20 @@ public class Server {
                 String typo = in.readLine();
                 System.out.println("Client: " + typo);
                 String syntax = p.checkForCommands(typo);
+
+                out.println(syntax);
+                out.flush();
+
                 if (typo.equals("List") || typo.equals("dirr")) {
 
                     System.out.println("Server: " + syntax);
-                    out.println(syntax);
-                    out.flush();
 
                 } else if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
 
-                    
-                    if(syntax.equals("gone")){
-                        out.println(syntax);
-                        out.flush();
+                    if (syntax.equals("gone")) {
                         System.out.println("Stop");
-                    }
-                    else{
-                    
+                    } else {
+
                         dlFile(syntax);
                     }
                 }
@@ -109,16 +108,14 @@ public class Server {
             System.out.println("skickar fil");
             out.println(filebyte.length);
             out.println(dlfile.getName());
-            
-            System.out.println(filebyte.length);
-            System.out.println(dlfile.getName());
-            
+
             os.write(filebyte, 0, filebyte.length);
             os.flush();
             out.flush();
             System.out.println("done");
-        } catch (IOException ioe) {
+        } catch (IOException e) {
 
+            e.printStackTrace();
         }
     }
 

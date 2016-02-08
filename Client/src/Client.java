@@ -47,18 +47,16 @@ public class Client {
 
             String syntax = "";
             while (true) {
-                
+
                 Scanner sc = new Scanner(System.in);
                 System.out.println(">>>>>");
                 String typo = sc.nextLine();
                 out.println(typo);
                 out.flush();
-                
-                
-                
-                if (typo.equals("List") || typo.equals("dirr")) {
 
-                    syntax = in.readLine();
+                syntax = in.readLine();
+
+                if (typo.equals("List") || typo.equals("dirr")) {
 
                     String[] splitRes = syntax.split(",");
                     for (int i = 0; i < splitRes.length; i++) {
@@ -66,8 +64,8 @@ public class Client {
                     }
                 }
                 if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
-                    
-                    syntax = in.readLine();
+
+                    System.err.println(syntax);
 
                     if (syntax.equals("gone")) {
                         System.out.println("File doesent exist");
@@ -114,7 +112,7 @@ public class Client {
     }
 
     public void getFile() {
-        
+
         InputStream is = null;
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
@@ -122,7 +120,7 @@ public class Client {
         int byteRead;
         int current = 0;
         try {
-            
+
             is = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String FILE_SIZE = in.readLine();

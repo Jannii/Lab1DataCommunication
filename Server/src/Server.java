@@ -61,10 +61,8 @@ public class Server {
                     System.out.println("Server: " + syntax);
                     out.println(syntax);
                     out.flush();
-                    
 
-                }
-                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+                } else if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
 
                     if (syntax.equals("gone")) {
 
@@ -74,8 +72,12 @@ public class Server {
                     } else {
 
                         out.println(syntax);
+                        out.flush();
                         dlFile(syntax);
                     }
+                } else {
+
+                    out.println("Command doesent exist");
                 }
 
             } catch (IOException ex) {
@@ -101,33 +103,45 @@ public class Server {
     }
 
     private void dlFile(String path) {
-        FileInputStream fIS;
-        BufferedInputStream bIS;
-        OutputStream os;
+        FileInputStream fIS = null;
+        BufferedInputStream bIS = null;
+        BufferedOutputStream os = null;
         try {
             File dlfile = new File(path);
             byte[] filebyte = new byte[(int) dlfile.length()];
             fIS = new FileInputStream(dlfile);
             bIS = new BufferedInputStream(fIS);
             bIS.read(filebyte, 0, filebyte.length);
-            os = socket.getOutputStream();
+
+            os = new BufferedOutputStream(socket.getOutputStream());
+
             System.out.println("skickar fil");
-            
+
             out.println(filebyte.length);
             out.println(dlfile.getName());
+            out.flush();
+            out.flush();
 
             os.write(filebyte, 0, filebyte.length);
-                        
+
             os.flush();
-            out.flush();
-            
-            
+
             System.out.println("done");
-            
+
         } catch (IOException e) {
 
             e.printStackTrace();
-        } 
+        } finally {
+
+            try {
+                os.close();
+                fIS.close();
+                bIS.close();
+                StartServer(PORT);
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     private void shutDownHook(Socket socket) {

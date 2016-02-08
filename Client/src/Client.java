@@ -95,7 +95,7 @@ public class Client {
 
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            DIS = new DataInputStream(socket.getInputStream());
+            //DIS = new DataInputStream(socket.getInputStream());
 
             System.out.println("Your Ip: " + socket.getInetAddress());
 
@@ -112,72 +112,62 @@ public class Client {
     }
 
     public void getFile() {
-        
+
         InputStream is;
         BufferedOutputStream bOS = null;
-        FileOutputStream fOS = null;
+        FileOutputStream fOS;
         BufferedReader in;
         ByteArrayOutputStream baos;
         int FILE_SIZE_INT;
         int byteRead;
         int current = 0;
+        byte[] fileByte = new byte[1];
         try {
             baos = new ByteArrayOutputStream();
-            System.out.println("try start");
-            is = socket.getInputStream();
+
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String FILE_SIZE = in.readLine();
             FILE_SIZE_INT = Integer.parseInt(FILE_SIZE);
             System.out.println("FILE_SIZE: " + FILE_SIZE_INT);
             String FILE_NAME = in.readLine();
+
+            is = socket.getInputStream();
             System.out.println("FILE_NAME: " + FILE_NAME);
+
             fOS = new FileOutputStream(dlFolder + "\\" + FILE_NAME);
             bOS = new BufferedOutputStream(fOS);
-            byte[] fileByte = new byte[FILE_SIZE_INT];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            
-            
-            
-            byteRead = is.read(fileByte, 0, fileByte.length);
-            System.err.println(byteRead);
-            current = byteRead;
-            System.out.println("Current " + current);
 
-            do {
-                System.out.println("do while");
-                baos.write(fileByte);
-                byteRead = is.read(fileByte, current, (fileByte.length - current));
+            if (is != null) {
 
-                System.out.println("byteRead: " + byteRead);
-                if (byteRead >= 0) {
-                    current =+ byteRead;
-                    System.out.println("Test");
-                }
-            }while (current < FILE_SIZE_INT);
+                byteRead = is.read(fileByte, 0, fileByte.length);
 
-            
-            System.out.println("Done");
-            bOS.write(fileByte, 0, current);
-            bOS.flush();
-            fOS.close();
-            bOS.close();
+                do {
+                    baos.write(fileByte);
+                    byteRead = is.read(fileByte);
+                } while (byteRead != -1);
 
+                bOS.write(baos.toByteArray());
+                bOS.flush();
+            } else {
+                System.out.println("Get fucked");
+            }
+
+//            System.out.println("Done");
+//            bOS.write(fileByte, 0, current);
+//            bOS.flush();
+//              fOS.close();
+//            bOS.close();
         } catch (Exception ioe) {
             ioe.printStackTrace();
         } finally {
-            
-            System.out.println("Test");
+
             try {
-                System.out.println("close");
-                if (fOS != null) {
-                    fOS.close();
-                }
-                if (bOS != null) {
-                    bOS.close();
-                }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+                bOS.close();
+                clientConnect(SERVER, PORT);
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

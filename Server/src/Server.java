@@ -70,16 +70,12 @@ public class Server {
                     if(syntax.equals("gone")){
                         out.println(syntax);
                         out.flush();
-
-                    if (syntax.equals("gone")) {
-
-                        System.out.println("Stop");
                     } else {
-
+                        
                         dlFile(syntax);
                     }
                 }
-                }
+                
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }

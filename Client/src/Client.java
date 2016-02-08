@@ -54,10 +54,10 @@ public class Client {
                 out.println(typo);
                 out.flush();
 
-                syntax = in.readLine();
+                
 
                 if (typo.equals("List") || typo.equals("dirr")) {
-
+                        syntax = in.readLine();
                     String[] splitRes = syntax.split(",");
                     for (int i = 0; i < splitRes.length; i++) {
                         System.out.println(splitRes[i]);
@@ -67,11 +67,7 @@ public class Client {
                     
                     syntax = in.readLine();
 
-
-
                     System.err.println(syntax);
-
-
                     if (syntax.equals("gone")) {
                         System.out.println("File doesent exist");
                     } else {

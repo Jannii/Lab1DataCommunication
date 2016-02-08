@@ -96,7 +96,7 @@ public class SyntaxList {
                 if (f.exists() == false) {
 
                     System.out.println("File doesent exist");
-                    return "";
+                    return "gone";
                     
                 } else if (f.exists() == true) {
 

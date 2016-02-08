@@ -63,7 +63,9 @@ public class Server {
                 } else if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
 
                     
-                    if(syntax.equals("")){
+                    if(syntax.equals("gone")){
+                        out.println(syntax);
+                        out.flush();
                         System.out.println("Stop");
                     }
                     else{
@@ -107,6 +109,10 @@ public class Server {
             System.out.println("skickar fil");
             out.println(filebyte.length);
             out.println(dlfile.getName());
+            
+            System.out.println(filebyte.length);
+            System.out.println(dlfile.getName());
+            
             os.write(filebyte, 0, filebyte.length);
             os.flush();
             out.flush();

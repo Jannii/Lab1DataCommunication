@@ -118,9 +118,11 @@ public class Client {
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
         BufferedReader in = null;
+        ByteArrayOutputStream baos =null;
         int byteRead;
         int current = 0;
         try {
+            baos = new ByteArrayOutputStream();
             System.out.println("try start");
             is = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -134,14 +136,14 @@ public class Client {
             byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            byteRead = is.read(fileByte, 0, fileByte.length);
-            System.out.println("bytreRead: " + byteRead);
+            byteRead = is.read(fileByte);
             current = byteRead;
-
             System.out.println("Current " + current);
             do {
                 System.out.println("do while");
-                byteRead = is.read(fileByte, current, (fileByte.length - current));
+                baos.write(fileByte);
+                byteRead = is.read(fileByte);
+                
                 System.out.println("byteRead: " + byteRead);
                 if (byteRead >= -1) {
                     current += byteRead;

@@ -60,10 +60,12 @@ public class Server {
                     out.println(syntax);
                     out.flush();
 
-                } else if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+                } if(typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
 
                     
-                    if(syntax.equals("")){
+                    if(syntax.equals("gone")){
+                        out.println(syntax);
+                        out.flush();
                         System.out.println("Stop");
                     }
                     else{

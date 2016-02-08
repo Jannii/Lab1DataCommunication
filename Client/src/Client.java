@@ -63,9 +63,11 @@ public class Client {
                         System.out.println(splitRes[i]);
                     }
                 }
-                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+                 if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+                    
+                    syntax = in.readLine();
 
-                    if (syntax.equals("")) {
+                    if (syntax.equals("gone")) {
                         System.out.println("File doesent exist");
                     } else {
                         System.out.println("Attempting to download");
@@ -117,9 +119,10 @@ public class Client {
         int byteRead;
         int current = 0;
         try {
-
+            System.out.println("try start");
             is = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("filesize");
             String FILE_SIZE = in.readLine();
             System.out.println("FILE_SIZE: " + FILE_SIZE);
             String FILE_NAME = in.readLine();

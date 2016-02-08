@@ -2,10 +2,12 @@
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client {
 
-    private static final int PORT = 9000;
+    private static final int PORT = 9006;
     private static String SERVER = "Localhost";
     private static int tries = 0;
     private PrintWriter outPutToServer1;
@@ -54,19 +56,16 @@ public class Client {
                 out.println(typo);
                 out.flush();
 
-                
+                syntax = in.readLine();
+                System.err.println(syntax + "Syntax");
 
-                if (typo.equals("List") || typo.equals("dirr")) {
-                        syntax = in.readLine();
+                if (typo.equalsIgnoreCase("list") || typo.equalsIgnoreCase("dirr")) {
                     String[] splitRes = syntax.split(",");
                     for (int i = 0; i < splitRes.length; i++) {
                         System.out.println(splitRes[i]);
                     }
                 }
-                 if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
-                    
-                    syntax = in.readLine();
-
+                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
                     System.err.println(syntax);
                     if (syntax.equals("gone")) {
                         System.out.println("File doesent exist");
@@ -113,12 +112,13 @@ public class Client {
     }
 
     public void getFile() {
-
-        InputStream is = null;
+        
+        InputStream is;
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
-        BufferedReader in = null;
-        ByteArrayOutputStream baos =null;
+        BufferedReader in;
+        ByteArrayOutputStream baos;
+        int FILE_SIZE_INT;
         int byteRead;
         int current = 0;
         try {
@@ -126,34 +126,48 @@ public class Client {
             System.out.println("try start");
             is = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("filesize");
             String FILE_SIZE = in.readLine();
-            System.out.println("FILE_SIZE: " + FILE_SIZE);
+            FILE_SIZE_INT = Integer.parseInt(FILE_SIZE);
+            System.out.println("FILE_SIZE: " + FILE_SIZE_INT);
             String FILE_NAME = in.readLine();
             System.out.println("FILE_NAME: " + FILE_NAME);
             fOS = new FileOutputStream(dlFolder + "\\" + FILE_NAME);
             bOS = new BufferedOutputStream(fOS);
-            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
+            byte[] fileByte = new byte[FILE_SIZE_INT];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            byteRead = is.read(fileByte,0,fileByte.length);
+            
+            
+            
+            byteRead = is.read(fileByte, 0, fileByte.length);
+            System.err.println(byteRead);
             current = byteRead;
             System.out.println("Current " + current);
+
             do {
                 System.out.println("do while");
                 baos.write(fileByte);
-                byteRead = is.read(fileByte,current,(fileByte.length - current));
-                
+                byteRead = is.read(fileByte, current, (fileByte.length - current));
+
                 System.out.println("byteRead: " + byteRead);
-                if (byteRead >= -1) {
-                    current += byteRead;
+                if (byteRead >= 0) {
+                    current =+ byteRead;
+                    System.out.println("Test");
                 }
-            } while (Integer.parseInt(FILE_SIZE) > current);
+            }while (current < FILE_SIZE_INT);
+
+            
+            System.out.println("Done");
             bOS.write(fileByte, 0, current);
             bOS.flush();
+            fOS.close();
+            bOS.close();
+
         } catch (Exception ioe) {
             ioe.printStackTrace();
         } finally {
+            
+            System.out.println("Test");
             try {
                 System.out.println("close");
                 if (fOS != null) {

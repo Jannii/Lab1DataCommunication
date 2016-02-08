@@ -34,7 +34,7 @@ public class SyntaxList {
 
             return syntaxDirr();
 
-        } else if (syntaxCommand[0].equalsIgnoreCase("List")) {
+        } else if (syntaxCommand[0].equalsIgnoreCase("list")) {
 
             return syntaxList();
 

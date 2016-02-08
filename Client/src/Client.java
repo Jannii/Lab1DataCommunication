@@ -136,13 +136,13 @@ public class Client {
             byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            byteRead = is.read(fileByte);
+            byteRead = is.read(fileByte,0,fileByte.length);
             current = byteRead;
             System.out.println("Current " + current);
             do {
                 System.out.println("do while");
                 baos.write(fileByte);
-                byteRead = is.read(fileByte);
+                byteRead = is.read(fileByte,current,(fileByte.length - current));
                 
                 System.out.println("byteRead: " + byteRead);
                 if (byteRead >= -1) {

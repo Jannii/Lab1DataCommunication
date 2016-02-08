@@ -100,7 +100,7 @@ public class Client {
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
         BufferedReader in = null;
-        int byteRead = 0;
+        int byteRead;
         int current = 0;
         try {
             
@@ -116,7 +116,7 @@ public class Client {
             byte [] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            byteRead = is.read(fileByte,0,fileByte.length);
+            byteRead = is.read(fileByte,0,fileByte.length);   
             System.out.println("bytreRead: "+byteRead);
             current = byteRead;
             
@@ -125,7 +125,7 @@ public class Client {
                 System.out.println("do while");
                 byteRead = is.read(fileByte, current, (fileByte.length - current));
                 System.out.println("byteRead: " +byteRead);
-                if (byteRead >= 0) {
+                if (byteRead >= -1) {
                     current += byteRead;
                 }
             } while (Integer.parseInt(FILE_SIZE) > current);

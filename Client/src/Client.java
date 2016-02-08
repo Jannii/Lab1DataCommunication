@@ -8,14 +8,10 @@ public class Client {
     private static final int PORT = 9000;
     private static String SERVER = "Localhost";
     private static int tries = 0;
-
-    //DataInputStream inputFromServer;
-    //DataOutputStream outputToServer;
-    PrintWriter outPutToServer1;
-    BufferedReader inPutFromServer1;
-
-    Socket socket;
-    static String dlFolder;
+    private PrintWriter outPutToServer1;
+    private BufferedReader inPutFromServer1;
+    private Socket socket;
+    private static String dlFolder;
 
     public static void main(String[] args) {
         try {
@@ -41,20 +37,63 @@ public class Client {
             port = Integer.parseInt(args[1]);
         }
 
-        new Client(server, port);
+        Client t = new Client();
+        t.clientConnect(server, port);
     }
 
-    public Client(String server, int port) {
+    public void checkForCommand(String server, int port, PrintWriter out, BufferedReader in) {
 
         try {
-            // create a socket to connect to the server
+
+            
+            
+            while (true) {
+                String syntax = "";
+                Scanner sc = new Scanner(System.in);
+                System.out.println(">>>>>");
+                String typo = sc.nextLine();
+                out.println(typo);
+                out.flush();
+                if (typo.equals("List") || typo.equals("dirr")) {
+
+                    syntax = in.readLine();
+
+                    String[] splitRes = syntax.split(",");
+                    for (int i = 0; i < splitRes.length; i++) {
+                        System.out.println(splitRes[i]);
+                    }
+                }
+                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+
+                    if (syntax.equals("")) {
+                        System.out.println("File doesent exist");
+                    } else {
+                        System.out.println("Attempting to download");
+                        getFile();
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            retryException(server, port);
+        }
+
+    }
+
+    public void clientConnect(String server, int port) {
+
+        BufferedReader in = null;
+        PrintWriter out = null;
+        DataInputStream DIS = null;
+
+        try {
             tries++;
             System.out.println("Attempting to connect to " + SERVER + ":" + PORT);
             socket = new Socket(server, port);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            DataInputStream DIS = new DataInputStream(socket.getInputStream());
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            DIS = new DataInputStream(socket.getInputStream());
 
             System.out.println("Your Ip: " + socket.getInetAddress());
 
@@ -62,40 +101,15 @@ public class Client {
             out.flush();
 
             System.out.println("Connecion succeed");
-
-            while (true) {
-                Scanner sc = new Scanner(System.in);
-                System.out.println(">>>>>");
-                String typo = sc.nextLine();
-
-                out.println(typo);
-                out.flush();
-                if (typo.equals("List") || typo.equals("apa")) {
-
-                    String syntax = in.readLine();
-
-                    String[] splitRes = syntax.split(",");
-                    //if (!syntax.equals("")) {
-                    for (int i = 0; i < splitRes.length; i++) {
-                        System.out.println(splitRes[i]);
-                    }
-
-                    //}
-                }
-                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
-                    getFile();
-                }
-            }
-
-        } catch (IOException e) {
-            //e.printStackTrace();
+        } catch (IOException ex) {
             retryException(server, port);
         }
+
+        checkForCommand(server, port, out, in);
 
     }
 
     public void getFile() {
-        System.out.println("går in i get file");
         InputStream is = null;
         BufferedOutputStream bOS = null;
         FileOutputStream fOS = null;
@@ -103,28 +117,27 @@ public class Client {
         int byteRead;
         int current = 0;
         try {
-            
+
             is = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String FILE_SIZE = in.readLine();
-            System.out.println("FILE_SIZE: "+FILE_SIZE);
+            System.out.println("FILE_SIZE: " + FILE_SIZE);
             String FILE_NAME = in.readLine();
-            System.out.println("FILE_NAME: "+ FILE_NAME);
-//            String FILE_BYTESIZE = in.readLine()
+            System.out.println("FILE_NAME: " + FILE_NAME);
             fOS = new FileOutputStream(dlFolder + "\\" + FILE_NAME);
             bOS = new BufferedOutputStream(fOS);
-            byte [] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
+            byte[] fileByte = new byte[Integer.parseInt(FILE_SIZE)];
             System.out.println(fileByte.length);
             System.out.println(dlFolder + "\\" + FILE_NAME);
-            byteRead = is.read(fileByte,0,fileByte.length);   
-            System.out.println("bytreRead: "+byteRead);
+            byteRead = is.read(fileByte, 0, fileByte.length);
+            System.out.println("bytreRead: " + byteRead);
             current = byteRead;
-            
+
             System.out.println("Current " + current);
             do {
                 System.out.println("do while");
                 byteRead = is.read(fileByte, current, (fileByte.length - current));
-                System.out.println("byteRead: " +byteRead);
+                System.out.println("byteRead: " + byteRead);
                 if (byteRead >= -1) {
                     current += byteRead;
                 }
@@ -161,9 +174,10 @@ public class Client {
         System.out.println("Failed to connect");
         System.out.println("Attempting to reconnect... " + tries);
         if (tries < 5) {
-            new Client(server, port);
+            clientConnect(server, port);
         } else {
             System.out.println("Failed.");
+            System.exit(0);
         }
     }
 

@@ -1,38 +1,27 @@
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server {
 
     private static final int PORT = 9000;
     private ServerSocket serverSocket;
-    Socket socket;
-
-    //DataInputStream inputFromClient;
-    DataOutputStream outputToClient;
-    PrintWriter out;
-    BufferedReader in;
+    private Socket socket;
+    private DataOutputStream outputToClient;
+    private PrintWriter out;
+    private BufferedReader in;
 
     public static void main(String[] args) {
         int port = PORT;
         if (args.length == 1) {
             port = Integer.parseInt(args[0]);
         }
-        new Server(port);
+        Server t = new Server();
+        t.CreateServer(port);
     }
 
-    public Server(int port) {
-        //PrintWriter outToClient1;
-        //BufferedReader inPutFromClient1;
-
-        // create a server socket
-        try {
-            serverSocket = new ServerSocket(port);
-
-            System.out.println("Creating Server...");
-        } catch (IOException e) {
-            System.err.println("Error in creation of the server socket");;
-            System.exit(0);
-        }
+    public void StartServer(int port) {
 
         while (true) {
             try {
@@ -48,30 +37,59 @@ public class Server {
                 String test = in.readLine();
                 System.out.println("Client connected on IP: " + test);
 
-                Protocol p = new Protocol();
-
-                while (true) {
-
-                    String typo = in.readLine();
-                    System.out.println("Client: " + typo);
-                    String syntax = p.checkForCommands(typo);
-                    if (typo.equals("List") || typo.equals("apa")) {
-                        //if (!syntax.equals("")) {
-                        System.out.println("Server: " + syntax);
-
-                        //}
-                        out.println(syntax);
-                        out.flush();
-                    } else if (typo.charAt(0) == 'd'&& typo.charAt(1) == 'l') {
-                        
-                        dlFile(syntax);
-                    }
-
-                }
+                checkForCommand();
 
             } catch (IOException e) {
                 System.out.println("Client failed to connect!");
             }
+        }
+    }
+
+    public void checkForCommand() {
+        SyntaxList p = new SyntaxList();
+
+        while (true) {
+
+            try {
+                String typo = in.readLine();
+                System.out.println("Client: " + typo);
+                String syntax = p.checkForCommands(typo);
+                if (typo.equals("List") || typo.equals("dirr")) {
+
+                    System.out.println("Server: " + syntax);
+                    out.println(syntax);
+                    out.flush();
+
+                } else if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+
+                    
+                    if(syntax.equals("")){
+                        System.out.println("Stop");
+                    }
+                    else{
+                    
+                        dlFile(syntax);
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+    }
+
+    public void CreateServer(int port) {
+
+        try {
+
+            serverSocket = new ServerSocket(port);
+            System.out.println("Creating Server...");
+            StartServer(port);
+
+        } catch (IOException e) {
+            System.err.println("Error in creation of the server socket");;
+            System.exit(0);
         }
     }
 
@@ -95,14 +113,7 @@ public class Server {
             System.out.println("done");
         } catch (IOException ioe) {
 
-        } finally {
-//            try{
-//                System.out.println("");
-//            }catch(IOException ioe){
-//                
-//            }
         }
-
     }
 
     private void shutDownHook(Socket socket) {

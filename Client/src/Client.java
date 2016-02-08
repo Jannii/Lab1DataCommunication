@@ -125,7 +125,7 @@ public class Client {
                 System.out.println("do while");
                 byteRead = is.read(fileByte, current, (fileByte.length - current));
                 System.out.println("byteRead: " +byteRead);
-                if (byteRead >= 0) {
+                if (byteRead >= -1) {
                     current += byteRead;
                 }
             } while (Integer.parseInt(FILE_SIZE) > current);

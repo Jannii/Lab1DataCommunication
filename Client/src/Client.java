@@ -65,7 +65,7 @@ public class Client {
                         System.out.println(splitRes[i]);
                     }
                 }
-                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+                   if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l'&& typo.charAt(2) == ':'&& typo.charAt(3) != '\0'){
                     System.err.println(syntax);
                     if (syntax.equals("gone")) {
                         System.out.println("File doesent exist");

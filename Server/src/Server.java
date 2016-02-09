@@ -61,8 +61,9 @@ public class Server {
                     System.out.println("Server: " + syntax);
                     out.println(syntax);
                     out.flush();
+                }
 
-                } else if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l') {
+                if (typo.charAt(0) == 'd' && typo.charAt(1) == 'l' && typo.charAt(2) == ':' && typo.charAt(3) != '\0') {
 
                     if (syntax.equals("gone")) {
 
@@ -120,9 +121,11 @@ public class Server {
             out.println(filebyte.length);
             out.println(dlfile.getName());
             out.flush();
-            out.flush();
-
-            os.write(filebyte, 0, filebyte.length);
+            int i = 0;
+            do {
+                os.write(filebyte, i, filebyte.length);
+                i++;
+            } while (i < filebyte.length);
 
             os.flush();
 
